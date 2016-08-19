@@ -1,5 +1,5 @@
-# ui-driver-skel
-Skeleton Rancher UI driver for custom docker-machine drivers
+# ui-driver-we87
+Skeleton Rancher UI driver for we87 drivers
 
 ## Setup
 

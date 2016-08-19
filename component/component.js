@@ -4,49 +4,52 @@ define('ui/components/machine/driver-%%DRIVERNAME%%/component', ['exports', 'emb
 
   exports['default'] = _ember['default'].Component.extend(_uiMixinsDriver['default'], {
     driverName: '%%DRIVERNAME%%',
-/* ^--- And here */
+    /* ^--- And here */
+    model: null,
+    config: Ember.computed.alias('model.%%DRIVERNAME%%Config'),
 
     // Write your component here, starting with setting 'model' to a machine with your config populated
-    bootstrap: function() {
+    bootstrap: function () {
       let config = this.get('store').createRecord({
-        type        : '%%DRIVERNAME%%Config',
-        size        : 512,
+        type: '%%DRIVERNAME%%Config',
+        region: "cn-shanghai",
+        upgradeKernel: true,
       });
 
       this.set('model', this.get('store').createRecord({
         type: 'machine',
         '%%DRIVERNAME%%Config': config,
+        'engineRegistryMirror': ["https://9hhtm9h4.mirror.aliyuncs.com"],
       }));
     },
 
     // Add custom validation beyond what can be done from the config API schema
-    validate() {
-      // Get generic API validation errors
-      this._super();
-      var errors = this.get('errors')||[];
+    validate: function () {
+      let errors = [];
 
-      // Add more specific errors
-
-      // Check something and add an error entry if it fails:
-      if ( parseInt(this.get('model.%%DRIVERNAME%%Config.size'),10) < 1024 )
-      {
-        errors.push('Size must be at least 1024 MB');
+      if (!this.get('config.accessKeyId')) {
+        errors.push('Access Key is required');
       }
 
-      // Set the array of errors for display,
-      // and return true if saving should continue.
-      if ( errors.get('length') )
-      {
-        this.set('errors', errors);
+      if (!this.get('config.accessKeySecret')) {
+        errors.push('Access Key Secret is requried');
+      }
+
+      if (!this.get('config.ipAddress')) {
+        errors.push('IP Address is required');
+      }
+
+      if (!this.get('config.sshPassword')) {
+        errors.push('Password is required to access the machine');
+      }
+
+      if (errors.length) {
+        this.set('errors', errors.uniq());
         return false;
       }
-      else
-      {
-        this.set('errors', null);
-        return true;
-      }
+
+      return true;
     },
 
-    // Any computed properties or custom logic can go here
   });
 });
