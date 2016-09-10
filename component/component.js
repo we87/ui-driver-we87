@@ -14,6 +14,7 @@ define('ui/components/machine/driver-%%DRIVERNAME%%/component', ['exports', 'emb
         type: '%%DRIVERNAME%%Config',
         region: "cn-shanghai",
         upgradeKernel: true,
+        autoFormatDisk: true,
       });
 
       this.set('model', this.get('store').createRecord({
